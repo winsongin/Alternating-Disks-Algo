@@ -1,6 +1,6 @@
 # Project-1
 
-Alternating disks: light-dark
+##Alternating disks: light-dark
 
 Group members:
 
