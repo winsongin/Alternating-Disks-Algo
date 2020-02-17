@@ -1,12 +1,12 @@
 ///////////////////////////////////////////////////////////////////////////////
 // disks.hpp
 //
-// Definitions for two algorithms that each solve the 
+// Definitions for two algorithms that each solve the
 // alternating disks problem.
 //
-// As provided, this header has four functions marked with 
+// As provided, this header has four functions marked with
 // TODO comments.
-// You need to write in your own implementation of these 
+// You need to write in your own implementation of these
 // functions.
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -18,6 +18,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+
 
 // State of one disk, either light or dark.
 enum disk_color { DISK_LIGHT, DISK_DARK };
@@ -95,8 +96,22 @@ public:
   // that the first disk at index 0 is light, the second disk at index 1
   // is dark, and so on for the entire row of disks.
   bool is_alternating() const {
-    // TODO: Write code for this function, including rewriting the return
-    // statement, and then delete these comments.
+    if(_colors.size() > 1) {
+      for(int i = 0; i < _colors.size(); i++) {
+          if(i%2 == 0 && _colors.at(i) == DISK_LIGHT) { // even indices must be light
+            continue;
+          }
+          else if(i%2 == 1 && _colors.at(i) == DISK_DARK) { // odd indices must be dark
+            continue;
+          }
+          else {
+            return false;
+          }
+      }
+
+      return true;
+    }
+
     return false;
   }
 
@@ -104,9 +119,20 @@ public:
   // on the left (low indices) and all dark disks on the right (high
   // indices).
   bool is_sorted() const {
-    // TODO: Write code for this function, including rewriting the return
-    // statement, and then delete these comments.
-   return false;
+    int firstHalf = (_colors.size()/2) - 1; // used to determine the halfway mark of the vector
+    for(int i = 0; i < _colors.size(); i++) {
+      if(i <= firstHalf && _colors.at(i) == DISK_LIGHT) {
+        continue;
+      }
+      else if(_colors.at(i) == DISK_DARK) {
+        continue;
+      }
+      else {
+        return false;
+      }
+    }
+
+   return true; // the whole vector is sorted
   }
 };
 
@@ -137,22 +163,53 @@ public:
 
 // Algorithm that sorts disks using the left-to-right algorithm.
 sorted_disks sort_left_to_right(const disk_state& before) {
-  // TODO: Write code for this function, including rewriting the return
-  // statement, and then delete these comments.
-
-  // check that the input is in alternating format  
+  // Check that the input is in alternating format
   assert(before.is_alternating());
-  
-  return sorted_disks(before, 0);
+  // Make a copy of the parameter in order to alter the vector of disks
+  disk_state copyOfBefore = before;
+  int swapCounter = 0; 
+
+  while(copyOfBefore.is_sorted() == false) { // if it's not sorted, continue sorting
+    for(int i = 0; i < copyOfBefore.total_count()-1; i++){ // total_count()-1 to prevent out-of-bounds error when performing comparison
+        if(copyOfBefore.get(i) == DISK_DARK && copyOfBefore.get(i+1) == DISK_LIGHT) {
+          copyOfBefore.swap(i); // Before swap: (DARK)(LIGHT) -----> After Swap: (LIGHT)(DARK)
+          swapCounter++; // increase by one for EVERY swap we perform in each iteration of the for-loop
+        }
+    }
+  }
+
+  return sorted_disks(copyOfBefore, swapCounter);
 }
 
 // Algorithm that sorts disks using the lawnmower algorithm.
 sorted_disks sort_lawnmower(const disk_state& before) {
-  // TODO: Write code for this function, including rewriting the return
-  // statement, and then delete these comments.
   // check that the input is in alternating format
   assert(before.is_alternating());
 
-  // TODO
-  return sorted_disks(before, 0);
+  // Make a copy of the parameter in order to alter the vector of disks
+  disk_state copyOfBefore = before;
+  int swapCounter = 0;
+  int iteration = 0;
+
+  while(copyOfBefore.is_sorted() == false) {
+    if(iteration%2 == 0) { // for even iterations, sort from left to right
+      for(int i = 0; i < copyOfBefore.total_count()-1; i++){ // total_count()-1 to prevent out-of-bounds error when performing comparison
+          if(copyOfBefore.get(i) == DISK_DARK && copyOfBefore.get(i+1) == DISK_LIGHT) {
+            copyOfBefore.swap(i); // (DARK)(LIGHT) -----> (LIGHT)(DARK)
+            swapCounter++; // increase
+          }
+      }
+      iteration++;
+    }
+    else { // for odd iterations, sort from right to left
+      for(int i = copyOfBefore.total_count()-1; i > 0; i--){ // decrement so we can sort from right to left
+        if(copyOfBefore.get(i) == DISK_LIGHT && copyOfBefore.get(i-1) == DISK_DARK) {
+          copyOfBefore.swap(i-1);
+          swapCounter++;
+        }
+      }
+      iteration++;
+    }
+  }
+  return sorted_disks(copyOfBefore, swapCounter);
 }
