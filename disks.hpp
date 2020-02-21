@@ -96,38 +96,21 @@ public:
   // that the first disk at index 0 is light, the second disk at index 1
   // is dark, and so on for the entire row of disks.
   bool is_alternating() const {
-    if(_colors.size() > 1) {
-      for(size_t i = 0; i < _colors.size(); i++) {
-          if(i%2 == 0 && _colors.at(i) == DISK_LIGHT) { // even indices must be light
-            continue;
-          }
-          else if(i%2 == 1 && _colors.at(i) == DISK_DARK) { // odd indices must be dark
-            continue;
-          }
-          else {
+      for(size_t i = 0; i < _colors.size(); i += 2) { // the increment is 2 because every even index should have a DISK_LIGHT and every odd index should should have a DISK_DARK
+          if(!(_colors.at(i) == DISK_LIGHT && _colors.at(i+1) == DISK_DARK)){ // even indices == DISK_LIGHT and odd indices == DISK_DARK
             return false;
           }
       }
 
-      return true;
-    }
-
-    return false;
+    return true;
   }
 
   // Return true when this disk_state is fully sorted, with all light disks
   // on the left (low indices) and all dark disks on the right (high
   // indices).
   bool is_sorted() const {
-    size_t firstHalf = (_colors.size()/2) - 1; // used to determine the halfway mark of the vector
-    for(size_t i = 0; i < _colors.size(); i++) {
-      if(i <= firstHalf && _colors.at(i) == DISK_LIGHT) {
-        continue;
-      }
-      else if(_colors.at(i) == DISK_DARK) {
-        continue;
-      }
-      else {
+    for(size_t i = 0; i <= (_colors.size()/2)-1; i++){
+      if(_colors.at(i) != DISK_LIGHT){
         return false;
       }
     }
