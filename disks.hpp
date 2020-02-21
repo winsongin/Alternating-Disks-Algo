@@ -165,20 +165,19 @@ public:
 sorted_disks sort_left_to_right(const disk_state& before) {
   // Check that the input is in alternating format
   assert(before.is_alternating());
-  // Make a copy of the parameter in order to alter the vector of disks
-  disk_state copyOfBefore = before;
-  int swapCounter = 0; 
+  disk_state diskList = before; // Make a copy of the parameter in order to alter the vector of disks
+  int swapCounter = 0;
 
-  while(copyOfBefore.is_sorted() == false) { // if it's not sorted, continue sorting
-    for(int i = 0; i < copyOfBefore.total_count()-1; i++){ // total_count()-1 to prevent out-of-bounds error when performing comparison
-        if(copyOfBefore.get(i) == DISK_DARK && copyOfBefore.get(i+1) == DISK_LIGHT) {
-          copyOfBefore.swap(i); // Before swap: (DARK)(LIGHT) -----> After Swap: (LIGHT)(DARK)
-          swapCounter++; // increase by one for EVERY swap we perform in each iteration of the for-loop
+  for(int i = 0; i < (diskList.total_count()/2); i++){ // divide total_count() by 2 since there are a row of 2n disks and we only need to iterate (2n/2) times
+    for(int i = 0; i < diskList.total_count()-1; i++){ // total_count()-1 to prevent out-of-bounds error when performing comparison
+        if(diskList.get(i) == DISK_DARK && diskList.get(i+1) == DISK_LIGHT) {
+          diskList.swap(i);
+          swapCounter++; 
         }
     }
   }
 
-  return sorted_disks(copyOfBefore, swapCounter);
+  return sorted_disks(diskList, swapCounter);
 }
 
 // Algorithm that sorts disks using the lawnmower algorithm.
@@ -186,30 +185,22 @@ sorted_disks sort_lawnmower(const disk_state& before) {
   // check that the input is in alternating format
   assert(before.is_alternating());
 
-  // Make a copy of the parameter in order to alter the vector of disks
-  disk_state copyOfBefore = before;
+  disk_state diskList = before;   // Make a copy of the parameter in order to alter the vector of disks
   int swapCounter = 0;
-  int iteration = 0;
 
-  while(copyOfBefore.is_sorted() == false) {
-    if(iteration%2 == 0) { // for even iterations, sort from left to right
-      for(int i = 0; i < copyOfBefore.total_count()-1; i++){ // total_count()-1 to prevent out-of-bounds error when performing comparison
-          if(copyOfBefore.get(i) == DISK_DARK && copyOfBefore.get(i+1) == DISK_LIGHT) {
-            copyOfBefore.swap(i); // (DARK)(LIGHT) -----> (LIGHT)(DARK)
-            swapCounter++; // increase
+    for(int i = 0; i < (diskList.total_count()/2); i++) { // divide total_count() by 2 since there are a row of 2n disks and we only need to iterate (2n/2) times
+      for(int i = 0; i < diskList.total_count()-1; i++){ // total_count()-1 to prevent out-of-bounds error when performing comparison
+          if(diskList.get(i) == DISK_DARK && diskList.get(i+1) == DISK_LIGHT) { // swapping as it traverses from left-to-right
+            diskList.swap(i);
+            swapCounter++;
           }
       }
-      iteration++;
-    }
-    else { // for odd iterations, sort from right to left
-      for(int i = copyOfBefore.total_count()-1; i > 0; i--){ // decrement so we can sort from right to left
-        if(copyOfBefore.get(i) == DISK_LIGHT && copyOfBefore.get(i-1) == DISK_DARK) {
-          copyOfBefore.swap(i-1);
+      for(int i = diskList.total_count()-1; i > 0; i--){ // decrement so we can sort from right to left
+        if(diskList.get(i) == DISK_LIGHT && diskList.get(i-1) == DISK_DARK) { // swapping as it traverses from right to left
+          diskList.swap(i-1);
           swapCounter++;
         }
       }
-      iteration++;
     }
-  }
-  return sorted_disks(copyOfBefore, swapCounter);
+  return sorted_disks(diskList, swapCounter);
 }
