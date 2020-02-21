@@ -97,7 +97,7 @@ public:
   // is dark, and so on for the entire row of disks.
   bool is_alternating() const {
     if(_colors.size() > 1) {
-      for(int i = 0; i < _colors.size(); i++) {
+      for(size_t i = 0; i < _colors.size(); i++) {
           if(i%2 == 0 && _colors.at(i) == DISK_LIGHT) { // even indices must be light
             continue;
           }
@@ -119,8 +119,8 @@ public:
   // on the left (low indices) and all dark disks on the right (high
   // indices).
   bool is_sorted() const {
-    int firstHalf = (_colors.size()/2) - 1; // used to determine the halfway mark of the vector
-    for(int i = 0; i < _colors.size(); i++) {
+    size_t firstHalf = (_colors.size()/2) - 1; // used to determine the halfway mark of the vector
+    for(size_t i = 0; i < _colors.size(); i++) {
       if(i <= firstHalf && _colors.at(i) == DISK_LIGHT) {
         continue;
       }
@@ -166,13 +166,13 @@ sorted_disks sort_left_to_right(const disk_state& before) {
   // Check that the input is in alternating format
   assert(before.is_alternating());
   disk_state diskList = before; // Make a copy of the parameter in order to alter the vector of disks
-  int swapCounter = 0;
+  size_t swapCounter = 0;
 
-  for(int i = 0; i < (diskList.total_count()/2); i++){ // divide total_count() by 2 since there are a row of 2n disks and we only need to iterate (2n/2) times
-    for(int i = 0; i < diskList.total_count()-1; i++){ // total_count()-1 to prevent out-of-bounds error when performing comparison
+  for(size_t i = 0; i < (diskList.total_count()/2); i++){ // divide total_count() by 2 since there are a row of 2n disks and we only need to iterate (2n/2) times
+    for(size_t i = 0; i < diskList.total_count()-1; i++){ // total_count()-1 to prevent out-of-bounds error when performing comparison
         if(diskList.get(i) == DISK_DARK && diskList.get(i+1) == DISK_LIGHT) {
           diskList.swap(i);
-          swapCounter++; 
+          swapCounter++;
         }
     }
   }
@@ -186,16 +186,16 @@ sorted_disks sort_lawnmower(const disk_state& before) {
   assert(before.is_alternating());
 
   disk_state diskList = before;   // Make a copy of the parameter in order to alter the vector of disks
-  int swapCounter = 0;
+  size_t swapCounter = 0;
 
-    for(int i = 0; i < (diskList.total_count()/2); i++) { // divide total_count() by 2 since there are a row of 2n disks and we only need to iterate (2n/2) times
-      for(int i = 0; i < diskList.total_count()-1; i++){ // total_count()-1 to prevent out-of-bounds error when performing comparison
+    for(size_t i = 0; i < (diskList.total_count()/2); i++) { // divide total_count() by 2 since there are a row of 2n disks and we only need to iterate (2n/2) times
+      for(size_t i = 0; i < diskList.total_count()-1; i++){ // total_count()-1 to prevent out-of-bounds error when performing comparison
           if(diskList.get(i) == DISK_DARK && diskList.get(i+1) == DISK_LIGHT) { // swapping as it traverses from left-to-right
             diskList.swap(i);
             swapCounter++;
           }
       }
-      for(int i = diskList.total_count()-1; i > 0; i--){ // decrement so we can sort from right to left
+      for(size_t i = diskList.total_count()-1; i > 0; i--){ // decrement so we can sort from right to left
         if(diskList.get(i) == DISK_LIGHT && diskList.get(i-1) == DISK_DARK) { // swapping as it traverses from right to left
           diskList.swap(i-1);
           swapCounter++;
